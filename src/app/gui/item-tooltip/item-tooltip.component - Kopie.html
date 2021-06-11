@@ -1,0 +1,22 @@
+<div class="item-tooltip">
+  <div class="tooltip-title">{{title}}</div>
+  <ng-container *ngIf="description">
+    <div class="tooltip-description">{{description}}</div>
+    <hr>
+  </ng-container>
+  <div>
+    <ng-container *ngFor="let skill of skills | keyvalue">
+      {{skill}}
+      <app-icon [iconID]="skill.value.skillIcon"></app-icon>
+      <span>{{skill.value.description}}</span>
+    </ng-container>
+  </div>
+  <div>
+    Rarity: <lux-item-rarity [rarity]="rarity"></lux-item-rarity>
+  </div>
+  <hr *ngIf="value > 0 || altCurrencyValue > 0">
+  <div class="tooltip-value-list">
+    <lux-coins *ngIf="value > 0" [count]="value"></lux-coins>
+    <lux-currency *ngIf="altCurrencyValue > 0" [count]="altCurrencyValue" [image]="altCurrencyIcon"></lux-currency>
+  </div>
+</div>
