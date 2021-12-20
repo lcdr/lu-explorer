@@ -1,0 +1,8 @@
+<span>
+&lt;{{elem.tagName}}&gt;{{elem.textContent}}
+<ng-container *ngFor="let child of iter(elem.children)">
+&nbsp;&nbsp;&nbsp;&nbsp;<lux-xml-elem [elem]="child"></lux-xml-elem>
+</ng-container>
+&lt;/{{elem.tagName}}&gt;
+</span>
+<br>

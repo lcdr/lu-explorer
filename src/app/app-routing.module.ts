@@ -5,6 +5,7 @@ import { GithubSpaComponent } from './util/github-spa/github-spa.component';
 
 const routes: Routes = [
   { path: 'misc', loadChildren: () => import('./misc/misc.module').then(m => m.MiscModule) },
+  { path: 'chars', loadChildren: () => import('./chars/chars.module').then(m => m.CharsModule) },
   { path: 'zones', loadChildren: () => import('./zones/zones.module').then(m => m.ZonesModule) },
   { path: 'skills', loadChildren: () => import('./skills/skills.module').then(m => m.SkillsModule) },
   { path: 'scripts', loadChildren: () => import('./scripts/scripts.module').then(m => m.ScriptsModule) },

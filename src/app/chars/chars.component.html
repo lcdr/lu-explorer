@@ -1,0 +1,70 @@
+<h2>Save Data Viewer</h2>
+<input type="file" (change)="onCharXml($event.target)">
+<ng-container *ngIf="xml">
+	<div>
+		<h3 luxTooltip="/obj/inv">Inventory Component</h3>
+		<div *ngFor="let inv of iter(xml.querySelectorAll('obj &gt; inv &gt; items &gt; in'))">
+			<h4 luxTooltip="/obj/inv/items/in">Inventory Type {{inv.getAttribute('t')}}</h4>
+			<div style="display: flex; flex-wrap: wrap;">
+				<lux-slot *ngFor="let item of iter(inv.children)" [luxFetchItem]="item.getAttribute('l') | num" [count]="item.getAttribute('c') | num" [style.order]="item.getAttribute('s')"></lux-slot>
+			</div>
+		</div>
+	</div>
+	<ng-container *ngFor="let comp of names | keyvalue">
+		<div *ngFor="let elem of iter(xml.querySelectorAll('obj &gt; '+comp.key))">
+			<h3 luxTooltip="/obj/{{comp.key}}">{{names[comp.key].name}}</h3>
+			<span *ngFor="let kv of names[comp.key]['attrs'] | keyvalue" luxTooltip="/obj/{{comp.key}}/@{{kv.key}}">{{kv.value}}: {{elem.getAttribute(kv.key)}}<br></span>
+		</div>
+	</ng-container>
+	<div *ngFor="let char of iter(xml.querySelectorAll('obj &gt; char'))">
+		<h3 luxTooltip="/obj/char">Character Component</h3>
+		Last custom build parts: <ng-container *ngFor="let typeval of char.getAttribute('lcbp').substring(0, char.getAttribute('lcbp').length-1).split(';')">
+			<ng-container *luxVar="typeval.split(':')[1]; let val">
+				<lux-slot [luxFetchItem]="val | num"></lux-slot>
+			</ng-container>
+		</ng-container><br>
+	</div>
+	<div *ngFor="let flag of iter(xml.querySelectorAll('obj &gt; flag'))">
+		<h3 luxTooltip="/obj/flag">Flag Component</h3>
+		Flags:
+		<ng-container *ngFor="let f of iter(flag.querySelectorAll('f'))"><span *luxVar="f.getAttribute('id') | num; let id" luxTooltip="/obj/flag/f[@id={{id}}]"><ng-container *ngFor="let bit of f.getAttribute('v') | bits">{{bit + (id*64)}}, </ng-container></span></ng-container><br>
+	</div>
+	<div>
+		<h3 luxTooltip="/obj/mis">Mission Component</h3>
+		<div>
+			<h4 luxTooltip="/obj/mis/done">Completed</h4>
+			<table>
+				<tr>
+					<th luxTooltip="/obj/mis/done/m/@id">Mission</th>
+					<th luxTooltip="/obj/mis/done/m/@cts">Last completed on</th>
+					<th luxTooltip="/obj/mis/done/m/@cct">Times completed</th>
+				</tr>
+				<tr *ngFor="let mis of iter(xml.querySelectorAll('obj &gt; mis &gt; done &gt; m'))">
+					<td><lux-mission [luxFetch]="mis.getAttribute('id') | num"></lux-mission></td>
+					<td>{{mis.getAttribute('cts') | num | todate}}</td>
+					<td>{{mis.getAttribute('cct')}}</td>
+				</tr>
+			</table>
+		</div>
+		<div>
+			<h4 luxTooltip="/obj/mis/cur">In Progress</h4>
+			<div *ngFor="let mis of iter(xml.querySelectorAll('obj &gt; mis &gt; cur &gt; m'))">
+				<lux-mission [luxFetch]="mis.getAttribute('id') | num" [status]="2"></lux-mission>
+				<h5>Tasks</h5>
+				<ul>
+					<li *ngFor="let task of iter(mis.children)">{{task.getAttribute('v')}}</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div *ngFor="let dest of iter(xml.querySelectorAll('obj &gt; dest'))">
+		<h3 luxTooltip="/obj/dest">Destroyable Component</h3>
+		<span luxTooltip="/obj/dest/@hc">{{dest.getAttribute('hc')}}</span> / <span luxTooltip="/obj/dest/@hm">{{dest.getAttribute('hm')}}</span> life points<br>
+		<span luxTooltip="/obj/dest/@ic">{{dest.getAttribute('ic')}}</span> / <span luxTooltip="/obj/dest/@im">{{dest.getAttribute('im')}}</span> imagination points<br>
+		<span luxTooltip="/obj/dest/@ac">{{dest.getAttribute('ac')}}</span> / <span luxTooltip="/obj/dest/@am">{{dest.getAttribute('am')}}</span> armor points<br>
+		<span luxTooltip="/obj/dest/@rsh">{{dest.getAttribute('rsh')}} respawn life points</span><br>
+		<span luxTooltip="/obj/dest/@rsi">{{dest.getAttribute('rsi')}} respawn imagination points</span><br>
+		<span luxTooltip="/obj/dest/@d">Is dead: {{dest.getAttribute('d')}}</span><br>
+		<span luxTooltip="/obj/dest/@imm">Is GM immune: {{dest.getAttribute('imm')}}</span><br>
+	</div>
+</ng-container>
