@@ -1,32 +1,39 @@
 <h2>Brick ID Table</h2>
 
 <div class="table-responsive">
-  <!--<p>Sorted by <code>{{sort}}</code>, limit <code>{{limit}}</code></p>-->
-  <ng-container *ngIf="$table | async | sort:sort; let table; else loading">
-    <table>
-      <tr>
-        <th>Icon</th>
-        <th><a (click)="setSort('LEGOBrickID')">LEGOBrickID</a></th>
-        <th><a (click)="setSort('NDObjectID')">NDObjectID</a></th>
-        <th>Name</th>
+  <table>
+    <tr>
+      <th>Icon</th>
+      <th><a (click)="setSort('LEGOBrickID')">LEGOBrickID</a></th>
+      <th><a (click)="setSort('NDObjectID')">NDObjectID</a></th>
+      <th><a (click)="setSort('name')">Name</a></th>
+    </tr>
+    <ng-container *ngIf="'
+      select
+        LEGOBrickID,
+        NDObjectID,
+        name_en_US as name
+      from
+        BrickIDTable b
+        join objects o on b.NDObjectID = o.id
+      order by ' + sort + ' ' + (ascending ? 'asc' : 'desc') + '
+      limit ' + limit + ' offset ' + page * limit
+      | query; let table; else loading">
+      <tr *ngFor="let brick of table">
+        <td><img class="brick-icon" [src]="'/lu-res/textures/ui/bricks/dds/m' + brick.LEGOBrickID + '.png'"></td>
+        <td>{{brick.LEGOBrickID}}</td>
+        <td><a routerLink="/objects/{{brick.NDObjectID}}">{{brick.NDObjectID}}</a></td>
+        <td>{{brick.name}}</td>
       </tr>
-      <ng-container *luxVar="$page | async; let page">
-        <ng-container *luxVar="limit * (page || 0); let skip">
-          <tr *ngFor="let brick of table | limit:limit:skip">
-            <td><img class="brick-icon" [src]="'/lu-res/textures/ui/bricks/dds/m' + brick.LEGOBrickID + '.png'"></td>
-            <td>{{brick.LEGOBrickID}}</td>
-            <td><a routerLink="/objects/{{brick.NDObjectID}}">{{brick.NDObjectID}}</a></td>
-            <td>{{brick.NDObjectID | loc:'Objects' | async | elem: "name"}}</td>
-          </tr>
-        </ng-container>
-      </ng-container>
-    </table>
-    <ng-container *luxVar="$page | async; let page">
-      <ng-container *luxVar="table.length | divceil:limit; let count">
-        <app-pagination [count]="count" [current]="page" prefix="/misc/brick-ids">
-        </app-pagination>
-      </ng-container>
     </ng-container>
+  </table>
+  <ng-container *ngIf="'
+    select
+      ceil(count(*) / ' + limit + '.0) as page_count
+    from BrickIDTable
+    ' | query; let count">
+    <app-pagination [count]="+count[0].page_count" [current]="page" prefix="/misc/brick-ids">
+    </app-pagination>
   </ng-container>
   <ng-template #loading>
     Loading...
