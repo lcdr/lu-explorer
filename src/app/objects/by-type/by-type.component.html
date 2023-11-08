@@ -6,19 +6,16 @@
 
 <h2>Objects <small>Type: "{{type}}"</small></h2>
 
-<div class="table-responsive">
-  <table>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Localized Name</th>
-    </tr>
-    <tr *ngFor="let object of objects | async">
-      <td>{{object.id}}</td>
-      <td><a routerLink="/objects/{{object.id}}">{{object.name ? object.name : '[Unnamed]'}}</a></td>
-      <td>{{object.id | loc:"Objects" | async | elem:"name" }}</td>
-    </tr>
-  </table>
-</div>
-
-<app-pagination [prefix]="'/objects/types/' + type" [count]="page_count" [current]="page"></app-pagination>
+<lux-table
+  select="id as ID, name as Name, name_en_US as 'Localized Name'"
+  from="Objects"
+  where="type = '{{type}}'"
+  order-by="ID"
+  [limit]="100"
+  [page]="page" #table>
+  <tr *ngFor="let row of table.rows">
+    <td>{{row.ID}}</td>
+    <td><a routerLink="/objects/{{row.ID}}">{{row.Name}}</a></td>
+    <td>{{row["Localized Name"]}}</td>
+  </tr>
+</lux-table>
