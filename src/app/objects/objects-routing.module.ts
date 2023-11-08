@@ -35,11 +35,7 @@ const objectsRoutes: Routes = [
   { path: 'loot/table/:id', component: LootTableComponent, data: { title: params => `LootTable #${params.id}` } },
   { path: 'loot/matrix/:id', component: LootMatrixComponent, data: { title: params => `LootMatrix #${params.id}` } },
   { path: 'search', component: ObjectsSearchComponent, data: { title: "Search" } },
-  {
-    path: 'types/:type', component: ObjectsByTypeComponent, data: {
-      title: params => `Objects (${params['type']})`
-    }
-  },
+  { path: 'types/:type', redirectTo: "/objects/types/:type/page/0", pathMatch: "full" },
   {
     path: 'types/:type/page/:page', component: ObjectsByTypeComponent, data: {
       title: params => `Objects (${params['type']}; Page ${params['page']})`
