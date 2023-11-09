@@ -1,4 +1,4 @@
-ul.item-set-list {
+ul {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
@@ -7,6 +7,6 @@ ul.item-set-list {
     padding-left: 0;
 }
 
-ul.item-set-list li {
+li {
     display: inline-block;
 }
