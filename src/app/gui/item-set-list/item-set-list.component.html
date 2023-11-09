@@ -1,9 +1,15 @@
-<ul class="item-set-list" *ngIf="$itemSets | async; let sets">
-  <li class="item-set-slot" *ngFor="let set of sets">
-    <ng-container *luxVar="set.$loc | async; let loc">
-      <ng-container *luxVar="set.$table | async; let table">
-        <lux-item-set [id]="set.id" [name]="loc?.kitName | default:'[Unnamed]'" [rank]="table?.kitRank" [icon]="set.$icon | async | icon"></lux-item-set>
-      </ng-container>
-    </ng-container>
+<ul *ngIf="'
+  select
+    setID,
+    IconPath,
+    kitName_en_US as kitName,
+    kitRank
+  from
+    ItemSets isets
+    left join Icons i on i.IconID = isets.kitImage '
+  + _where
+  | query; let sets">
+  <li *ngFor="let set of sets">
+    <lux-item-set [id]="set.setID" [name]="set.kitName | default:'[Unnamed]'" [rank]="set.kitRank" [icon]="set.IconPath | icon"></lux-item-set>
   </li>
 </ul>
