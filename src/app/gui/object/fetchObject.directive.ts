@@ -1,34 +1,24 @@
 import { ApplicationRef, Directive, ElementRef, HostListener, Injector, Input, Renderer2 } from "@angular/core";
 import { LocationStrategy } from "@angular/common";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { LuCoreDataService } from "../../services";
 import { TooltipDirective } from "../tooltip.directive";
-import { ObjectFragment } from "generated/graphql";
+import { DB_Objects } from "../../../defs/cdclient";
 
 @Directive({
-  selector: "a[luxObject]"
+  selector: "a[luxFetchObject]"
 })
-export class ObjectDirective extends RouterLink {
+export class FetchObjectDirective extends RouterLink {
   private tooltipDirective: TooltipDirective;
 
-  @Input("luxObject") set obj(value: ObjectFragment) {
-    this.routerLink = "/objects/" + value.id;
-    if (value.displayName) {
-      this.element.nativeElement.textContent = value.displayName;
-    } else if (value.name) {
-      this.element.nativeElement.textContent = value.name;
-    } else {
-      this.element.nativeElement.textContent = `#${value.id}`;
-    }
-    if (value.description) {
-      this.tooltipDirective.content = value.description;
-    } else if (value._internalNotes) {
-      this.tooltipDirective.content = value._internalNotes;
-    } else {
-      this.tooltipDirective.content = null;
-    }
+  @Input("luxFetchObject") set id(id: number) {
+    this.routerLink = "/objects/" + id;
+    this.element.nativeElement.textContent = `#${id}`;
+    this.luCoreData.getSingleTableEntry("Objects", id).subscribe(this.onObject.bind(this));
   }
 
   constructor(
+    private luCoreData: LuCoreDataService,
     private element: ElementRef<HTMLAnchorElement>,
     router: Router,
     route: ActivatedRoute,
@@ -39,6 +29,19 @@ export class ObjectDirective extends RouterLink {
   ) {
     super(router, route, "-1", renderer, element, locationStrategy);
     this.tooltipDirective = new TooltipDirective(element, applicationRef, renderer, injector);
+  }
+
+  onObject(object: DB_Objects) {
+    if (object.displayName) {
+      this.element.nativeElement.textContent = object.displayName;
+    } else if (object.name) {
+      this.element.nativeElement.textContent = object.name;
+    }
+    if (object.description) {
+      this.tooltipDirective.content = object.description;
+    } else if (object._internalNotes) {
+      this.tooltipDirective.content = object._internalNotes;
+    }
   }
 
   @HostListener('mouseenter')
